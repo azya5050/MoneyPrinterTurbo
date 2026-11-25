@@ -284,7 +284,8 @@ def main():
     final = out / "DB_Cooper_Gokyuzunde_Kaybolan_Adam.mp4"
     run([
         "ffmpeg", "-y", "-loglevel", "error", "-i", str(joined), "-i", str(mixed),
-        "-vf", f"ass={subs}", "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "medium", "-crf", "20",
+        "-vf", f"ass={subs}", "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",
+        "-maxrate", "6M", "-bufsize", "12M",
         "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", "-shortest", str(final),
     ])
     # altyazının SRT kopyası (YouTube'a ayrıca yüklenebilir)

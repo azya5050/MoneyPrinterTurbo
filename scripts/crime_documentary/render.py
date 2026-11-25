@@ -274,7 +274,7 @@ def main():
         "[1:a]volume=0.16[m];[m][0:a]sidechaincompress=threshold=0.05:ratio=4:attack=20:release=400[md];"
         "[0:a]volume=1.0,highpass=f=70,acompressor=threshold=0.2:ratio=3[vo];"
         "[vo][md]amix=inputs=2:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11[o]",
-        "-map", "[o]", "-c:a", "aac", "-b:a", "192k", str(mixed),
+        "-map", "[o]", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", str(mixed),
     ])
     print("ses miksi tamam")
 

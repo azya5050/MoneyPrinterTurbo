@@ -72,6 +72,25 @@ def probe_duration(path: Path) -> float:
 
 
 # ------------------------------------------------------------- altyazı
+def attach_punctuation(words, text):
+    """TTS kelime sınırları noktalamasızdır; orijinal metinden geri ekle."""
+    pos = 0
+    for w in words:
+        j = text.find(w["text"], pos)
+        if j < 0:
+            continue
+        k = j + len(w["text"])
+        while k < len(text) and not text[k].isspace() and not text[k].isalnum():
+            k += 1
+        w["text"] = text[j:k]
+        pos = k
+
+
+def tr_title(text):
+    low = text.replace("I", "ı").replace("İ", "i").lower()
+    return " ".join(x[:1].replace("i", "İ").replace("ı", "I").upper() + x[1:] for x in low.split(" "))
+
+
 def ass_time(t: float) -> str:
     cs = int(round(t * 100))
     h, cs = divmod(cs, 360000)
@@ -226,6 +245,7 @@ def main():
         frames = int(math.ceil((lead + vd + tail) * FPS))
         dur = frames / FPS
         words = json.loads((work / f"v{i:02d}.json").read_text())
+        attach_punctuation(words, s["text"])
         for w in words:
             all_words.append({"start": t + lead + w["start"], "end": t + lead + w["end"], "text": w["text"]})
         timeline.append({"i": i, "start": t, "dur": dur, "frames": frames, "voice": vd})
@@ -298,7 +318,7 @@ def main():
     for tl, s in zip(timeline, scenes):
         if s["type"] == "chapter":
             m, sec = divmod(int(tl["start"]), 60)
-            chapters.append(f"{m:02d}:{sec:02d} {s['num'].title()} – {s['title'].title()}")
+            chapters.append(f"{m:02d}:{sec:02d} {tr_title(s['num'])} – {tr_title(s['title'])}")
     (out / "chapters.txt").write_text("\n".join(chapters) + "\n", encoding="utf-8")
     print("BİTTİ:", final, f"{total / 60:.2f} dk")
 
